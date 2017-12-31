@@ -7,7 +7,7 @@ class PlannerCtrl {
   /** @param {RecipeSvc} recipeSvc */
   constructor(recipeSvc) {
     /** @type {Recipe[]} */
-    this.recipes = recipeSvc.list();
+    this.recipes = [];
     /** @type {Meal[]} */
     this.meals = [];
     /** @type {Recipe} */
@@ -16,6 +16,11 @@ class PlannerCtrl {
     this.selectedRecipeServingSize = 1;
     /** @type {Ingredient[]} */
     this.ingredients = [];
+
+    recipeSvc.list().then(recipes => {
+      this.recipes = recipes;
+      console.log(this.recipes);
+    });
   }
 
   add() {

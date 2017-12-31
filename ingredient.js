@@ -5,15 +5,6 @@ class Ingredient {
     this.unit = unit;
   }
 
-  /** @return {*} */
-  serialize() {
-    return {
-      name: this.name,
-      amount: this.amount,
-      unit: this.unit,
-    };
-  }
-
   hash() {
     return `${this.name}_${this.unit}`;
   }

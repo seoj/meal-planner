@@ -8,22 +8,11 @@ class IngredientsCtrl {
    * @param {RecipeSvc} recipeSvc 
    */
   constructor($routeParams, recipeSvc) {
-    this.recipeSvc = recipeSvc;
-    this.recipe = this.recipeSvc.get($routeParams['recipeName']);
-  }
+    this.recipe = [];
 
-  add() {
-    this.recipe.ingredients.push(new Ingredient({}));
-    this.onChange();
-  }
-
-  remove(ingredient) {
-    this.recipe.ingredients.splice(this.recipe.ingredients.findIndex(e => e === ingredient), 1);
-    this.onChange();
-  }
-
-  onChange() {
-    this.recipeSvc.persist();
+    recipeSvc.get($routeParams['recipeName']).then(recipe => {
+      this.recipe = recipe;
+    });
   }
 }
 

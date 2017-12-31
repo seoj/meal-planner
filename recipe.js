@@ -7,15 +7,6 @@ class Recipe {
     this.ingredients = ingredients;
   }
 
-  /** @return {*} */
-  serialize() {
-    return {
-      name: this.name,
-      servingSize: this.servingSize,
-      ingredients: this.ingredients.map(e => e.serialize()),
-    };
-  }
-
   /** @param {Recipe} recipe */
   merge(recipe) {
     this.servingSize = recipe.servingSize;

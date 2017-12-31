@@ -2,61 +2,34 @@ const Recipe = require('./recipe');
 
 // TODO: rename to RecipeService
 class RecipeSvc {
-  constructor() {
+  constructor($http, $q) {
+    this.$http = $http;
+    this.$q = $q;
     /** @type {Recipe[]} */
-    this.recipes = [];
+    this.recipes = null;
   }
 
-  /** @return {Recipe[]} */
+  /** @return {Promise<Recipe[]>} */
   list() {
-    return [...this.recipes].sort((a, b) => a.name.localeCompare(b.name));
-  }
-
-  /** @param {Recipe} recipe */
-  remove(recipe) {
-    this.recipes.splice(this.recipes.findIndex(e => e === recipe), 1);
-  }
-
-  create() {
-    this.recipes.push(new Recipe({}));
+    if (this.recipes) {
+      return this.$q.resolve([...this.recipes]);
+    }
+    return this.$http.get('https://storage.googleapis.com/elite-buttress-190723/recipes.json?')
+      .then(response => {
+        this.recipes = response.data.map(e => Recipe.deserialize(e)).sort((a, b) => a.name.localeCompare(b.name));
+        return [...this.recipes];
+      });
   }
 
   /**
    * @param {string} name
-   * @return {Recipe}
+   * @return {Promise<Recipe>}
    */
   get(name) {
-    return Recipe.copy(this.recipes.find(e => e.name === name));
-  }
-
-  persist() {
-    localStorage.setItem('recipes', JSON.stringify(this.generateExport()));
-  }
-
-  load() {
-    const serialized = localStorage.getItem('recipes');
-    if (serialized) {
-      this.recipes = JSON.parse(serialized).map(e => Recipe.deserialize(e));
-    }
-  }
-
-  /** @param {*[]} json */
-  import(json) {
-    const importedRecipes = json.map(e => Recipe.deserialize(e));
-    for (const importedRecipe of importedRecipes) {
-      const existingRecipe = this.recipes.find(e => e.name === importedRecipe.name);
-      if (existingRecipe) {
-        existingRecipe.merge(importedRecipe);
-      } else {
-        this.recipes.push(importedRecipe);
-      }
-    }
-    this.persist();
-  }
-
-  generateExport() {
-    return this.recipes.map(e => e.serialize());
+    return this.list().then(recipes => Recipe.copy(recipes.find(e => e.name === name)));
   }
 }
+
+RecipeSvc.$inject = ['$http', '$q'];
 
 module.exports = RecipeSvc;

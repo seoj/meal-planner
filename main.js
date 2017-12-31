@@ -1,5 +1,4 @@
 const angular = require('angular');
-const ImportExportCtrl = require('./import-export-ctrl');
 const IngredientsCtrl = require('./ingredients-ctrl');
 const ngRoute = require('angular-route');
 const PlannerCtrl = require('./planner-ctrl');
@@ -29,13 +28,6 @@ angular.module('recipes', [ngRoute, 'templates'])
         templateUrl: 'ingredients.ng.html',
       })
 
-      .when('/import-export', {
-        controller: ImportExportCtrl,
-        controllerAs: '$ctrl',
-        templateUrl: 'import-export.ng.html',
-      });
+      .otherwise('/planner');
   }])
-  .service('recipeSvc', RecipeSvc)
-  .run(['recipeSvc', (/** @type {RecipeSvc} */ recipeSvc) => {
-    recipeSvc.load();
-  }]);
+  .service('recipeSvc', RecipeSvc);
