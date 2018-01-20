@@ -21,7 +21,9 @@
       <tr>
         <td>
           <select ng-model="$ctrl.selectedRecipe">
-            <option ng-repeat="recipe in $ctrl.recipes" ng-value="recipe">{{recipe.name}}</option>
+            <optgroup ng-repeat="e in $ctrl.recipesByCategory" label="{{e.category}}">
+              <option ng-repeat="recipe in e.recipes" ng-value="recipe">{{recipe.name}}</option>
+            </optgroup>
           </select>
         </td>
         <td>

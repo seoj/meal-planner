@@ -6,8 +6,8 @@ const RecipeSvc = require('./recipe-service');
 class PlannerCtrl {
   /** @param {RecipeSvc} recipeSvc */
   constructor(recipeSvc) {
-    /** @type {Recipe[]} */
-    this.recipes = [];
+    /** @type {{category:string,recipes:Recipe[]}[]} */
+    this.recipesByCategory = [];
     /** @type {Meal[]} */
     this.meals = [];
     /** @type {Recipe} */
@@ -18,8 +18,20 @@ class PlannerCtrl {
     this.ingredients = [];
 
     recipeSvc.list().then(recipes => {
-      this.recipes = recipes;
-      console.log(this.recipes);
+      /** @type {Map<string,Recipe[]>} */
+      const map = new Map();
+      recipes.forEach(recipe => {
+        const list = map.get(recipe.category) || [];
+        map.set(recipe.category, list);
+        list.push(recipe);
+      });
+      map.forEach((value, key) => {
+        this.recipesByCategory.push({
+          category: key,
+          recipes: value,
+        });
+      });
+      this.recipesByCategory.sort((a, b) => a.category.localeCompare(b.category));
     });
   }
 
